@@ -1,26 +1,27 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppContext";
-import { useState } from "react";
 import avatr from "../assets/images/avatar.jpg";
 import logo from "../assets/images/logo.png";
-import pic01 from "../assets/images/pic01.jpg";
-import {
-  FaBars,
-  FaSearch,
-  FaInstagram,
-  FaFacebookF,
-  FaTwitter,
-  FaRss,
-} from "react-icons/fa";
-import { MdOutlineEmail } from "react-icons/md";
+import { FaBars, FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
+
 import SideMenu from "./SideMenu";
+import Footer from "./Footer";
 
 const Public = () => {
   const [menu, setMenu] = useState(false);
-  const { user } = useContext(AppContext);
+  const { user, getNews } = useContext(AppContext);
 
-  console.log(user);
+  const [news, setNews] = useState([]);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      const response = await getNews();
+      setNews(response.data);
+    };
+
+    fetchNews();
+  }, []);
 
   return (
     <div>
@@ -50,6 +51,23 @@ const Public = () => {
           </nav>
           <nav className="main">
             <ul>
+              <li className="">
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                    height: "100%",
+                    padding: "0 1rem",
+                    cursor: "pointer",
+                  }}
+                >
+                  <Link to={`/profile/${user?.user_PK}`}>
+                    <FaUser size={22} style={{ color: "gray" , marginTop: "25px"}} />
+                  </Link>
+                </div>
+              </li>
               <li className="menu">
                 <div
                   style={{
@@ -89,63 +107,63 @@ const Public = () => {
           ></div>
         )}
 
-        <SideMenu  menu={menu} setMenu={setMenu} />
+        <SideMenu menu={menu} setMenu={setMenu} />
 
         <div id="main">
-          <article className="post">
-            <header>
-              <div className="title">
-                <h2>
-                  <Link to={"/post/1"}>Magna sed adipiscing</Link>
-                </h2>
-                <p>Lorem ipsum dolor amet nullam consequat etiam feugiat</p>
-              </div>
-              <div className="meta">
-                <time className="published" dateTime="2015-11-01">
-                  November 1, 2015
-                </time>
-                <a href="#" className="author">
-                  <span className="name">Jane Doe</span>
-                  <img src={avatr} alt="" />
-                </a>
-              </div>
-            </header>
-            <Link to={"/post/1"} className="image featured">
-              <img src={pic01} alt="" />
-            </Link>
-            <p>
-              Mauris neque quam, fermentum ut nisl vitae, convallis maximus
-              nisl. Sed mattis nunc id lorem euismod placerat. Vivamus porttitor
-              magna enim, ac accumsan tortor cursus at. Phasellus sed ultricies
-              mi non congue ullam corper. Praesent tincidunt sed tellus ut
-              rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies
-              congue gravida diam non fringilla.
-            </p>
-            <footer>
-              <ul className="actions">
-                <li>
-                  <a href="single.html" className="button large">
-                    Continue Reading
-                  </a>
-                </li>
-              </ul>
-              <ul className="stats">
-                <li>
-                  <a href="#">General</a>
-                </li>
-                <li>
-                  <a href="#" className="icon solid fa-heart">
-                    28
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="icon solid fa-comment">
-                    128
-                  </a>
-                </li>
-              </ul>
-            </footer>
-          </article>
+          {news.map((article) => {
+            return (
+              <article className="post" key={article.news_PK}>
+                <header>
+                  <div className="title">
+                    <h2>
+                      <Link to={`/post/${article.news_PK}`}>
+                        {article.news_title}
+                      </Link>
+                    </h2>
+                  </div>
+                  <div className="meta">
+                    <time className="published">
+                      {new Date(article.CreatedAt).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </time>
+                    <a href="#" className="author">
+                      <span className="name">{article.author_name}</span>
+                      <img src={article.author_picture || avatr} alt="" />
+                    </a>
+                  </div>
+                </header>
+                <Link
+                  to={`/post/${article.news_PK}`}
+                  className="image featured"
+                >
+                  <img src={article.news_picture} alt="" />
+                </Link>
+                <p>{article.news_content}</p>
+                <footer>
+                  <ul className="actions">
+                    <li>
+                      <Link
+                        to={`/post/${article.news_PK}`}
+                        className="button large"
+                      >
+                        Continue Reading
+                      </Link>
+                    </li>
+                  </ul>
+                  <ul className="stats">
+                    <li>
+                      <Link to={`/post/${article.news_PK}`}>
+                        {article.news_category}
+                      </Link>
+                    </li>
+                  </ul>
+                </footer>
+              </article>
+            );
+          })}
         </div>
 
         <section id="sidebar">
@@ -157,50 +175,48 @@ const Public = () => {
               <h2>World News</h2>
               <p>
                 Another fine responsive site template by{" "}
-                <a href="http://html5up.net">HTML5 UP</a>
+                <Link
+                  to="https://walidalitr.github.io/My-Portfolio/"
+                  target="_blank"
+                >
+                  Walid Ali
+                </Link>
               </p>
             </header>
           </section>
 
           <section>
             <div className="mini-posts">
-              <article className="mini-post">
-                <header>
-                  <h3>
-                    <a href="single.html">Vitae sed condimentum</a>
-                  </h3>
-                  <time className="published" dateTime="2015-10-20">
-                    October 20, 2015
-                  </time>
-                  <a href="#" className="author">
-                    <img src="assets/images/avatar.jpg" alt="" />
-                  </a>
-                </header>
-                <a href="single.html" className="image">
-                  <img src="assets/images/pic04.jpg" alt="" />
-                </a>
-              </article>
-
-              <article className="mini-post">
-                <header>
-                  <h3>
-                    <a href="single.html">Rutrum neque accumsan</a>
-                  </h3>
-                  <time className="published" dateTime="2015-10-19">
-                    October 19, 2015
-                  </time>
-                  <a href="#" className="author">
-                    <img src="assets/images/avatar.jpg" alt="" />
-                  </a>
-                </header>
-                <a href="single.html" className="image">
-                  <img src="assets/images/pic05.jpg" alt="" />
-                </a>
-              </article>
+              {news.map((article) => {
+                return (
+                  <article className="mini-post" key={article.news_PK}>
+                    <header>
+                      <h3>
+                        <Link to={`/post/${article.news_PK}`}>
+                          {article.news_title}
+                        </Link>
+                      </h3>
+                      <time className="published" dateTime={article.CreatedAt}>
+                        {new Date(article.CreatedAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "long",
+                            day: "numeric",
+                            year: "numeric",
+                          }
+                        )}
+                      </time>
+                      <a href="#" className="author">
+                        <img src={article.author_picture || avatr} alt="" />
+                      </a>
+                    </header>
+                  </article>
+                );
+              })}
             </div>
           </section>
 
-          <section className="blurb">
+          {/* <section className="blurb">
             <h2>About</h2>
             <p>
               Mauris neque quam, fermentum ut nisl vitae, convallis maximus
@@ -210,50 +226,16 @@ const Public = () => {
             </p>
             <ul className="actions">
               <li>
-                <a href="#" className="button">
+                <Link to={"/"} className="button">
                   Learn More
-                </a>
+                </Link>
               </li>
             </ul>
-          </section>
+          </section> */}
 
-          <section id="footer">
-            <ul className="icons">
-              <li>
-                {/* for example : 
-                <Link to={"/instagram.com"}>
-                </Link> */}
-                <Link>
-                  <FaTwitter size={18} style={{ color: "red" }} />
-                </Link>
-              </li>
-              <li>
-                <Link>
-                  <FaFacebookF size={18} style={{ color: "red" }} />
-                </Link>
-              </li>
-              <li>
-                <Link>
-                  <FaInstagram size={18} style={{ color: "red" }} />
-                </Link>
-              </li>
-              <li>
-                <Link>
-                  <FaRss size={18} style={{ color: "red" }} />
-                </Link>
-              </li>
-              <li>
-                <Link>
-                  <MdOutlineEmail size={18} style={{ color: "red" }} />
-                </Link>
-              </li>
-            </ul>
-            <p className="copyright">
-              &copy; Untitled. Design:{" "}
-              <a href="http://html5up.net">Walid Ali</a>. assets/images:{" "}
-              <a href="http://unsplash.com">Unsplash</a>.
-            </p>
-          </section>
+          <center>
+            <Footer />
+          </center>
         </section>
       </div>
     </div>

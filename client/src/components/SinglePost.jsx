@@ -1,30 +1,41 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import logo from "../assets/images/logo.png";
-import avatar from "../assets/images/avatar.jpg";
-import pic01 from "../assets/images/pic01.jpg";
-import {
-  FaBars,
-  FaFacebookF,
-  FaInstagram,
-  FaRss,
-  FaSearch,
-  FaTwitter,
-} from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { MdOutlineEmail } from "react-icons/md";
+import avatr from "../assets/images/avatar.jpg";
+
+import { FaBars, FaRegEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
+import { Link, useParams } from "react-router-dom";
 import SideMenu from "./SideMenu";
 import Footer from "./Footer";
 
+import { AppContext } from "../context/AppContext";
+
 const SinglePost = () => {
   const [menu, setMenu] = useState(false);
+  const { user, getNewsById } = useContext(AppContext);
+  const { id } = useParams();
+
+  const [news, setNews] = useState([]);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      const response = await getNewsById(id);
+      setNews(response.data);
+    };
+
+    fetchNews();
+  }, []);
 
   return (
     <div>
-      <div id="wrapper" style={{
-        display: "flex",
-        flexDirection: "column",
-      }}>
+      <div
+        id="wrapper"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         {/* <!-- Header --> */}
         <header id="header">
           <Link to={"/"}>
@@ -90,68 +101,76 @@ const SinglePost = () => {
           ></div>
         )}
 
-      <SideMenu menu={menu} />
+        <SideMenu menu={menu} />
 
         {/* <!-- Main --> */}
         <div id="main">
           {/* <!-- Post --> */}
-          <article className="post">
-            <header>
-              <div className="title">
-                <h2>
-                  <a href="#">Magna sed adipiscing</a>
-                </h2>
-                <p>Lorem ipsum dolor amet nullam consequat etiam feugiat</p>
-              </div>
-              <div className="meta">
-                <time className="published" dateTime="2015-11-01">
-                  November 1, 2015
-                </time>
-                <a href="#" className="author">
-                  <span className="name">Jane Doe</span>
-                  <img src={avatar} alt="" />
-                </a>
-              </div>
-            </header>
-            <span className="image featured">
-              <img src={pic01} alt="" />
-            </span>
-            <p>
-              Mauris neque quam, fermentum ut nisl vitae, convallis maximus
-              nisl. Sed mattis nunc id lorem euismod placerat. Vivamus porttitor
-              magna enim, ac accumsan tortor cursus at. Phasellus sed ultricies
-              mi non congue ullam corper. Praesent tincidunt sed tellus ut
-              rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies
-              congue gravida diam non fringilla.
-            </p>
-            <p>
-              Nunc quis dui scelerisque, scelerisque urna ut, dapibus orci. Sed
-              vitae condimentum lectus, ut imperdiet quam. Maecenas in justo ut
-              nulla aliquam sodales vel at ligula. Sed blandit diam odio, sed
-              fringilla lectus molestie sit amet. Praesent eu tortor viverra
-              lorem mattis pulvinar feugiat in turpis. className aptent taciti
-              sociosqu ad litora torquent per conubia nostra, per inceptos
-              himenaeos. Fusce ullamcorper tellus sit amet mattis dignissim.
-              Phasellus ut metus ligula. Curabitur nec leo turpis. Ut gravida
-              purus quis erat pretium, sed pellentesque massa elementum. Fusce
-              vestibulum porta augue, at mattis justo. Integer sed sapien
-              fringilla, dapibus risus id, faucibus ante. Pellentesque mattis
-              nunc sit amet tortor pellentesque, non placerat neque viverra.{" "}
-            </p>
-            <footer>
-              <ul className="stats">
-                <li>
-                  <a href="#">General</a>
-                </li>
-              </ul>
-            </footer>
-          </article>
+          {news.map((article) => {
+            return (
+              <article className="post" key={article.news_PK}>
+                <header>
+                  <div className="title">
+                    <h2>
+                      <Link to={`/post/${article.news_PK}`}>
+                        {article.news_title}
+                      </Link>
+                    </h2>
+                  </div>
+                  <div className="meta">
+                    <time className="published">
+                      {new Date(article.CreatedAt).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </time>
+                    <a href="#" className="author">
+                      <span className="name">{article.author_name}</span>
+                      <img src={article.author_picture || avatr} alt="" />
+                    </a>
+                  </div>
+                </header>
+                <Link
+                  to={`/post/${article.news_PK}`}
+                  className="image featured"
+                >
+                  <img src={article.news_picture} alt="" />
+                </Link>
+                <p>{article.news_content}</p>
+                <footer style={{ display: "flex", justifyContent: "end" }}>
+                  <ul className="stats">
+                    <li style={{fontSize: "1.2rem"}}>
+                      <Link to={`/post/${article.news_PK}`}>
+                        {article.news_category}
+                      </Link>
+                    </li>
+                    {user && user.user_PK === article.author_PK && (
+                      <li>
+                        <Link to={`/edit/${article.news_PK}`}>
+                          <FaRegEdit size={18} />
+                        </Link>
+                      </li>
+                    )}
+
+                    {user && user.user_PK === article.author_PK && (
+                      <li>
+                        <Link to={`/delete/${article.news_PK}`}>
+                          <MdDelete size={18} />
+                        </Link>
+                      </li>
+                    )}
+                  </ul>
+                </footer>
+              </article>
+            );
+          })}
         </div>
 
         {/* <!-- Footer --> */}
-       <center>
-         <Footer  />
-       </center>
+        <center>
+          <Footer />
+        </center>
       </div>
     </div>
   );

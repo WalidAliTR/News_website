@@ -1,18 +1,59 @@
-import React from "react";
-import { useContext } from "react";
-import { FaSearch } from "react-icons/fa";
+import React , { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+
+
+import { FaSearch } from "react-icons/fa";
 
 import { AppContext } from "../context/AppContext";
 
+import { toast } from "react-hot-toast";
+
 const SideMenu = ({ menu }) => {
-  const { user } = useContext(AppContext);
+  const { user, logoutUser, getNews } = useContext(AppContext);
+  const [search, setSearch] = useState("");
+  const [news, setNews] = useState([]);
+  const [filteredNews, setFilteredNews] = useState([]);
+
+  const handleLogout = async () => {
+    const response = await logoutUser();
+    if (response.status === 200) {
+      toast.success("Logout Successful");
+    } else {
+      toast.error("Logout Failed");
+    }
+  };
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      const response = await getNews();
+      setNews(response.data);
+    };
+
+    fetchNews();
+  }, []);
+
+  // handle search on change
+  useEffect(() => {
+    const filtered = news.filter((item) =>
+      item.news_title.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredNews(filtered);
+  }, [news, search]);
+
+
   return (
     <div>
       <section id="menu" className={menu ? "menu_open" : "menu_close"}>
         <section>
           <form className="search" method="get" action="#">
-            <input type="text" name="query" placeholder="Search" />
+            <input
+              type="text"
+              name="query"
+              placeholder="Search"
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+            />
             <FaSearch
               size={17}
               style={{
@@ -28,18 +69,14 @@ const SideMenu = ({ menu }) => {
 
         <section>
           <ul className="links">
-            <li>
-              <a href="#">
-                <h3>Lorem ipsum</h3>
-                <p>Feugiat tempus veroeros dolor</p>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <h3>Dolor sit amet</h3>
-                <p>Sed vitae justo condimentum</p>
-              </a>
-            </li>
+            {filteredNews?.map((item) => (
+              <li key={item.news_PK}>
+                <Link to={`/post/${item.news_PK}`}>
+                  <h3>{item.news_title}</h3>
+                  <p>{item.news_content.slice(0, 44)}...</p>
+                </Link>
+              </li>
+            ))}
           </ul>
         </section>
 
@@ -60,7 +97,9 @@ const SideMenu = ({ menu }) => {
                 >
                   Create a New Artical
                 </Link>
-                <Link className="button large fit">Logout</Link>
+                <Link className="button large fit" onClick={handleLogout}>
+                  Logout
+                </Link>
               </li>
             )}
           </ul>

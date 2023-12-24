@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState , useEffect } from "react";
 import logo from "../assets/images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -8,7 +8,7 @@ import { toast } from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { loginUser } = useContext(AppContext);
+  const { user : globalUser ,   loginUser } = useContext(AppContext);
 
   const [user, setUser] = useState({
     email: "",
@@ -38,6 +38,12 @@ const Login = () => {
       toast.error("Login Failed");
     }
   };
+
+  useEffect(() => {
+    if(globalUser){
+      navigate("/");
+    }
+  }, [])
   return (
     <div>
       <div className="login-container">

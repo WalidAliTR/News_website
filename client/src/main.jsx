@@ -17,7 +17,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       </BrowserRouter>
       <Toaster
         toastOptions={{
-          position: "top-center",
+          position: "bottom-center",
           style: {
             borderRadius: "5px",
             background: "black",

@@ -1,4 +1,5 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState } from "react";
+
 
 import axios from "axios";
 export const AppContext = createContext();
@@ -7,15 +8,17 @@ export const AppContext = createContext();
 axios.defaults.baseURL = "http://localhost:5000";
 
 export const AppContextProvider = ({ children }) => {
-  const [user, setUser] = useState(null || JSON.parse(localStorage.getItem("user")));
+  const [user, setUser] = useState(
+    null || JSON.parse(localStorage.getItem("user"))
+  );
 
-
+  const [news, setNews] = useState([]);
 
   // register user
   const registerUser = async (user) => {
     try {
-      const response = await axios.post("/api/auth/register", user , {
-        validateStatus : false
+      const response = await axios.post("/api/auth/register", user, {
+        validateStatus: false,
       });
       console.log(response);
       return response;
@@ -27,8 +30,8 @@ export const AppContextProvider = ({ children }) => {
   // login user
   const loginUser = async (user) => {
     try {
-      const response  = await axios.post("/api/auth/login", user , {
-        validateStatus : false
+      const response = await axios.post("/api/auth/login", user, {
+        validateStatus: false,
       });
       console.log(response.data);
       setUser(response.data); // set user to state
@@ -40,6 +43,50 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
+  // logout user
+  const logoutUser = async () => {
+    setUser(null);
+    localStorage.removeItem("user");
+
+    try {
+      const response = await axios.get("/api/auth/logout", {
+        validateStatus: false,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // get news 
+  const getNews = async () => {
+    try {
+      const response = await axios.get("/api/news", {
+        validateStatus: false,
+      });
+      setNews(response.data);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // get news by id 
+  const getNewsById = async (id) => {
+    try {
+      const response = await axios.get(`/api/news/${id}`, {
+        validateStatus: false,
+      });
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+
+
 
   return (
     <AppContext.Provider
@@ -47,6 +94,10 @@ export const AppContextProvider = ({ children }) => {
         user,
         registerUser,
         loginUser,
+        logoutUser,
+        getNews,
+        getNewsById,
+        news,
       }}
     >
       {children}

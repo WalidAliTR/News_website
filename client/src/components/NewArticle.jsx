@@ -1,16 +1,95 @@
 import React from "react";
-import { useState, useContext } from "react";
-import logo from "../assets/images/logo.png";
-import { FaBars, FaSearch } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import Footer from "./Footer";
+import { useState, useContext, useEffect , CSSProperties } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
+import ClipLoader from "react-spinners/ClipLoader";
+
+// toast
+import { toast } from "react-hot-toast";
+
+// images
+import logo from "../assets/images/logo.png";
+
+// icons
+import { FaBars } from "react-icons/fa";
+// context
 import { AppContext } from "../context/AppContext";
+
+// custom hooks
+import profileImageChange from "../hooks/profileImageChange";
+
+// components
 import SideMenu from "./SideMenu";
+import Footer from "./Footer";
+import axios from "axios";
 
 const NewArticle = () => {
   const [menu, setMenu] = useState(false);
   const { user } = useContext(AppContext);
+  const navigate = useNavigate();
+
+  const [loading , setLoading] = useState(false);
+
+  const { imgUrl, handleImageChange, setImgUrl } = profileImageChange();
+
+  // all fields are required
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [content, setContent] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!title || !category || !content) {
+      toast.error("Please fill in all fields!");
+      return;
+    }
+
+    if (!user) {
+      toast.error("Please login to create an article!");
+      return;
+    }
+    const article = {
+      news_category: category,
+      news_title: title,
+      news_content: content,
+      author_PK: user?.user_PK,
+      news_picture: imgUrl,
+    };
+
+    try{
+      setLoading(true);
+      const response = await axios.post("/api/news", article, {
+        validateStatus: false,
+      });
+  
+      if (response.status === 201) {
+        toast.success("Article created successfully!");
+        navigate("/");
+      } else {
+        toast.error("Something went wrong!");
+      }
+  
+      setTitle("");
+      setCategory("");
+      setContent("");
+      setImgUrl("");
+
+    }catch(error){
+      console.log(error);
+    }finally{
+      setLoading(false);
+    }
+
+  };
+
+  // check if user is logged in
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
+  }, []);
+
   return (
     <div>
       <div
@@ -135,7 +214,7 @@ const NewArticle = () => {
         <div id="main">
           <article className="post">
             <h1>Add New News Article</h1>
-            <form action="process_news.php" method="post">
+            <form onSubmit={handleSubmit}>
               {" "}
               <div className="form-group">
                 <label htmlFor="title">Title:</label>
@@ -144,6 +223,9 @@ const NewArticle = () => {
                   id="title"
                   name="title"
                   autoComplete="no-password"
+                  onChange={(e) => {
+                    setTitle(e.target.value);
+                  }}
                 />
               </div>
               <div className="form">
@@ -154,12 +236,15 @@ const NewArticle = () => {
                   name="author"
                   autoComplete="no-password"
                   disabled
-                  value={user?.user_name}
+                  value={user?.user_name || ""}
                 />
               </div>
               <div className="form">
                 <label htmlFor="category">Select a category:</label>
-                <select id="category">
+                <select
+                  id="category"
+                  onChange={(e) => setCategory(e.target.value)}
+                >
                   <option value="news">News</option>
 
                   <option value="sports">Business</option>
@@ -177,15 +262,34 @@ const NewArticle = () => {
                   id="content"
                   name="content"
                   rows="10"
-                ></textarea>
+                  onChange={(e) => setContent(e.target.value)}
+                />
               </div>
               <div className="form">
                 <label htmlFor="image">Upload Image (Optional):</label>
-                <input type="file" id="image" name="image" />
+                <input
+                  type="file"
+                  id="image"
+                  name="image"
+                  onChange={handleImageChange}
+                />
               </div>
-              <button type="submit" style={{ marginTop: "1rem" }}>
+              <button type="submit" style={{ marginTop: "1rem" }} disabled={loading}>
                 Add News
               </button>
+
+              {loading && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: "1rem",
+                  }}
+                >
+                  <ClipLoader color={"#000"} loading={loading} size={50} />
+                </div>
+              )}
             </form>
           </article>
         </div>

@@ -93,4 +93,20 @@ const login = async (req, res) => {
   }
 };
 
-export { register, login };
+const logout = (req, res) => {
+  try {
+    res.cookie("token", "", {
+      httpOnly: true,
+      secure: false,
+      samesite : "strict",
+      expires: 0,
+    });
+
+    return res.status(200).send("Logged Out");
+  } catch (err) {
+    console.log(err.message);
+    return res.status(400).send("Error");
+  }
+};
+
+export { register, login , logout};
