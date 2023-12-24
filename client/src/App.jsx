@@ -5,6 +5,7 @@ import Public from "./components/Public";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import SinglePost from "./components/SinglePost";
+import NewArticle from "./components/NewArticle";
 import { Routes, Route } from "react-router-dom";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/post/:id" element={<SinglePost />} />
+        <Route path="/new" element={<NewArticle />} />
       </Routes>
     </div>
   );

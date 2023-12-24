@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AppContext } from "../context/AppContext";
 import { useState } from "react";
 import avatr from "../assets/images/avatar.jpg";
 import logo from "../assets/images/logo.png";
@@ -13,9 +14,13 @@ import {
 } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
 import { Link } from "react-router-dom";
+import SideMenu from "./SideMenu";
 
 const Public = () => {
   const [menu, setMenu] = useState(false);
+  const { user } = useContext(AppContext);
+
+  console.log(user);
 
   return (
     <div>
@@ -33,13 +38,13 @@ const Public = () => {
                 <a href="#">Business</a>
               </li>
               <li>
-                <a href="#">Sport</a>
+                <a href="#">Sports</a>
               </li>
               <li>
-                <a href="#">Energy</a>
+                <a href="#">Technolgoy</a>
               </li>
               <li>
-                <a href="#">Life</a>
+                <a href="#">Lifestyle</a>
               </li>
             </ul>
           </nav>
@@ -84,50 +89,7 @@ const Public = () => {
           ></div>
         )}
 
-        <section id="menu" className={menu ? "menu_open" : "menu_close"}>
-          <section>
-            <form className="search" method="get" action="#">
-              <input type="text" name="query" placeholder="Search" />
-              <FaSearch
-                size={17}
-                style={{
-                  color: "gray",
-                  cursor: "pointer",
-                  position: "absolute",
-                  left: "10px",
-                  top: "14px",
-                }}
-              />
-            </form>
-          </section>
-
-          <section>
-            <ul className="links">
-              <li>
-                <a href="#">
-                  <h3>Lorem ipsum</h3>
-                  <p>Feugiat tempus veroeros dolor</p>
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  <h3>Dolor sit amet</h3>
-                  <p>Sed vitae justo condimentum</p>
-                </a>
-              </li>
-            </ul>
-          </section>
-
-          <section>
-            <ul className="actions stacked">
-              <li>
-                <a href="login.html" className="button large fit">
-                  Log In
-                </a>
-              </li>
-            </ul>
-          </section>
-        </section>
+        <SideMenu  menu={menu} setMenu={setMenu} />
 
         <div id="main">
           <article className="post">
@@ -148,7 +110,7 @@ const Public = () => {
                 </a>
               </div>
             </header>
-              <Link to={"/post/1"} className="image featured">
+            <Link to={"/post/1"} className="image featured">
               <img src={pic01} alt="" />
             </Link>
             <p>

@@ -13,6 +13,8 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { MdOutlineEmail } from "react-icons/md";
+import SideMenu from "./SideMenu";
+import Footer from "./Footer";
 
 const SinglePost = () => {
   const [menu, setMenu] = useState(false);
@@ -88,50 +90,7 @@ const SinglePost = () => {
           ></div>
         )}
 
-        <section id="menu" className={menu ? "menu_open" : "menu_close"}>
-          <section>
-            <form className="search" method="get" action="#">
-              <input type="text" name="query" placeholder="Search" />
-              <FaSearch
-                size={17}
-                style={{
-                  color: "gray",
-                  cursor: "pointer",
-                  position: "absolute",
-                  left: "10px",
-                  top: "14px",
-                }}
-              />
-            </form>
-          </section>
-
-          <section>
-            <ul className="links">
-              <li>
-                <a href="#">
-                  <h3>Lorem ipsum</h3>
-                  <p>Feugiat tempus veroeros dolor</p>
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  <h3>Dolor sit amet</h3>
-                  <p>Sed vitae justo condimentum</p>
-                </a>
-              </li>
-            </ul>
-          </section>
-
-          <section>
-            <ul className="actions stacked">
-              <li>
-                <a href="login.html" className="button large fit">
-                  Log In
-                </a>
-              </li>
-            </ul>
-          </section>
-        </section>
+      <SideMenu menu={menu} />
 
         {/* <!-- Main --> */}
         <div id="main">
@@ -190,42 +149,9 @@ const SinglePost = () => {
         </div>
 
         {/* <!-- Footer --> */}
-        <section id="footer">
-          <ul className="icons">
-            <li>
-              {/* for example : 
-                <Link to={"/instagram.com"}>
-                </Link> */}
-              <Link>
-                <FaTwitter size={18} style={{ color: "red" }} />
-              </Link>
-            </li>
-            <li>
-              <Link>
-                <FaFacebookF size={18} style={{ color: "red" }} />
-              </Link>
-            </li>
-            <li>
-              <Link>
-                <FaInstagram size={18} style={{ color: "red" }} />
-              </Link>
-            </li>
-            <li>
-              <Link>
-                <FaRss size={18} style={{ color: "red" }} />
-              </Link>
-            </li>
-            <li>
-              <Link>
-                <MdOutlineEmail size={18} style={{ color: "red" }} />
-              </Link>
-            </li>
-          </ul>
-          <p className="copyright">
-            &copy; Untitled. Design: <a href="http://html5up.net">Walid Ali</a>.
-            Images: <a href="http://unsplash.com">Unsplash</a>.
-          </p>
-        </section>
+       <center>
+         <Footer  />
+       </center>
       </div>
     </div>
   );

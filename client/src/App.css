@@ -2199,7 +2199,7 @@ label {
   display: block;
   font-size: 0.9em;
   font-weight: 700;
-  margin: 0 0 1em 0;
+  margin: 10px 0 5px 0;
 }
 
 input[type="text"],
