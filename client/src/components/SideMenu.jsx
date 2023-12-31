@@ -1,6 +1,5 @@
-import React , { useContext, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-
+import React, { useContext, useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import { FaSearch } from "react-icons/fa";
 
@@ -13,11 +12,13 @@ const SideMenu = ({ menu }) => {
   const [search, setSearch] = useState("");
   const [news, setNews] = useState([]);
   const [filteredNews, setFilteredNews] = useState([]);
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     const response = await logoutUser();
     if (response.status === 200) {
       toast.success("Logout Successful");
+      navigate("/");
     } else {
       toast.error("Logout Failed");
     }
@@ -39,7 +40,6 @@ const SideMenu = ({ menu }) => {
     );
     setFilteredNews(filtered);
   }, [news, search]);
-
 
   return (
     <div>
@@ -71,7 +71,14 @@ const SideMenu = ({ menu }) => {
           <ul className="links">
             {filteredNews?.map((item) => (
               <li key={item.news_PK}>
-                <Link to={`/post/${item.news_PK}`}>
+                <Link
+                  to={`/post/${item.news_PK}`}
+                  onClick={() => {
+                    setMenu(!menu);
+                    // reload the page
+                    window.location.reload();
+                  }}
+                >
                   <h3>{item.news_title}</h3>
                   <p>{item.news_content.slice(0, 44)}...</p>
                 </Link>

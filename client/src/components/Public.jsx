@@ -64,7 +64,10 @@ const Public = () => {
                   }}
                 >
                   <Link to={`/profile/${user?.user_PK}`}>
-                    <FaUser size={22} style={{ color: "gray" , marginTop: "25px"}} />
+                    <FaUser
+                      size={22}
+                      style={{ color: "gray", marginTop: "18px" }}
+                    />
                   </Link>
                 </div>
               </li>
@@ -129,17 +132,37 @@ const Public = () => {
                         year: "numeric",
                       })}
                     </time>
-                    <a href="#" className="author">
+
+                    <Link
+                      to={`/profile/${article.author_PK}`}
+                      className="author"
+                    >
                       <span className="name">{article.author_name}</span>
-                      <img src={article.author_picture || avatr} alt="" />
-                    </a>
+                      <img
+                        src={article.author_picture || avatr}
+                        alt=""
+                        style={{
+                          clipPath: "circle(50%)",
+                          width: "50px",
+                          height: "50px",
+                          objectFit: "cover",
+                          marginLeft: "10px",
+                          marginRight: "10px",
+                        }}
+                      />
+                    </Link>
                   </div>
                 </header>
                 <Link
                   to={`/post/${article.news_PK}`}
                   className="image featured"
                 >
-                  <img src={article.news_picture} alt="" />
+                  <img
+                    src={article.news_picture}
+                    alt="News Picture"
+                    height={600}
+                    width={350}
+                  />
                 </Link>
                 <p>{article.news_content}</p>
                 <footer>
@@ -207,7 +230,18 @@ const Public = () => {
                         )}
                       </time>
                       <a href="#" className="author">
-                        <img src={article.author_picture || avatr} alt="" />
+                        <img
+                          src={article.author_picture || avatr}
+                          alt="User Picture"
+                          style={{
+                            clipPath: "circle(50%)",
+                            width: "50px",
+                            height: "50px",
+                            objectFit: "cover",
+                            marginLeft: "10px",
+                            marginRight: "10px",
+                          }}
+                        />
                       </a>
                     </header>
                   </article>

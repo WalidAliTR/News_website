@@ -7,6 +7,7 @@ import {v2 as cloudinary} from 'cloudinary';
 
 import authRoute from "./routes/authRoute.js";
 import newsRoute from "./routes/newsRoute.js";
+import usersRoute from "./routes/usersRoute.js";
 
 // check database connection
 checkConnection().then((isConnected) => {
@@ -58,6 +59,7 @@ app.use(cookieParser());
 
 
 app.use("/api/auth", authRoute);
+app.use("/api/users", usersRoute);
 app.use("/api/news", newsRoute);
 
 

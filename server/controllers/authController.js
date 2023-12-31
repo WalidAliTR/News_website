@@ -79,13 +79,14 @@ const login = async (req, res) => {
         res.cookie("token", token, {
           httpOnly: true,
           secure: false,
-          samesite : "strict",
+          samesite: "strict",
           maxAge: 1000 * 60 * 60 * 6, // 6 hours
         });
-
         // response
-        return res.status(200).json({ ...other});
+        return res.status(200).json({ ...other });
       }
+
+      console.log("Invalid Credentials");
     }
     return res.status(400).send("Invalid Credentials");
   } catch (err) {
@@ -98,7 +99,7 @@ const logout = (req, res) => {
     res.cookie("token", "", {
       httpOnly: true,
       secure: false,
-      samesite : "strict",
+      samesite: "strict",
       expires: 0,
     });
 
@@ -109,4 +110,4 @@ const logout = (req, res) => {
   }
 };
 
-export { register, login , logout};
+export { register, login, logout };

@@ -8,6 +8,7 @@ import SinglePost from "./components/SinglePost";
 import NewArticle from "./components/NewArticle";
 import Profile from "./components/Profile";
 import { Routes, Route } from "react-router-dom";
+import EditArticle from "./components/EditArticle";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/profile/:id" element={<Profile />} />
         <Route path="/post/:id" element={<SinglePost />} />
         <Route path="/new" element={<NewArticle />} />
+        <Route path="/edit/:id" element={<EditArticle />} />
       </Routes>
     </div>
   );

@@ -34,9 +34,11 @@ export const AppContextProvider = ({ children }) => {
         validateStatus: false,
       });
       console.log(response.data);
-      setUser(response.data); // set user to state
-      const savedUser = JSON.stringify(response.data);
-      localStorage.setItem("user", savedUser); // save user to local storage
+      if(response.status === 200) {
+        setUser(response.data); // set user to state
+        const savedUser = JSON.stringify(response.data);
+        localStorage.setItem("user", savedUser); // save user to local storage
+      }
       return response;
     } catch (error) {
       console.log(error);
@@ -53,6 +55,31 @@ export const AppContextProvider = ({ children }) => {
         validateStatus: false,
       });
       console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // get user by id
+  const getUserById = async (id) => {
+    try {
+      const response = await axios.get(`/api/users/${id}`, {
+        validateStatus: false,
+      });
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // update user
+  const updateUser = async (id, user) => {
+    try {
+      const response = await axios.put(`/api/users/${id}`, user, {
+        validateStatus: false,
+      });
+      setUser(response.data);
       return response;
     } catch (error) {
       console.log(error);
@@ -95,6 +122,8 @@ export const AppContextProvider = ({ children }) => {
         registerUser,
         loginUser,
         logoutUser,
+        updateUser,
+        getUserById,
         getNews,
         getNewsById,
         news,
